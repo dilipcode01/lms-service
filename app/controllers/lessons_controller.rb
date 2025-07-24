@@ -5,44 +5,45 @@ class LessonsController < ApplicationController
   end
 
   def show
-    lesson = LessonRecord.find(params[:id])
+    lesson = LessonRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless lesson
     render json: lesson
   end
 
   def create
-    command = CreateLessonCommand.new(
-      aggregate_id: Sequent.new_uuid,
+    lesson = LessonRecord.create!(
       course_id: params[:course_id],
       title: params[:title],
       content: params[:content]
     )
-    Sequent.command_service.execute_commands(command)
-    render json: { id: command.aggregate_id }, status: :created
+    render json: { id: lesson.id }, status: :created
   end
 
   def update
-    command = UpdateLessonCommand.new(
-      aggregate_id: params[:id],
-      title: params[:title],
-      content: params[:content]
-    )
-    Sequent.command_service.execute_commands(command)
+    lesson = LessonRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless lesson
+    lesson.update!(title: params[:title], content: params[:content])
     head :no_content
   end
 
   def destroy
-    command = DeleteLessonCommand.new(aggregate_id: params[:id])
-    Sequent.command_service.execute_commands(command)
+    lesson = LessonRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless lesson
+    lesson.destroy!
     head :no_content
   end
 
+  # POST /lessons/:id/complete
   def complete
-    command = CompleteLessonCommand.new(
-      aggregate_id: params[:user_id],
-      user_id: params[:user_id],
-      lesson_id: params[:id]
-    )
-    Sequent.command_service.execute_commands(command)
-    head :no_content
+    lesson = LessonRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless lesson
+    user_id = current_user_id # Use from JWT
+    unless user_id.present?
+      return render json: { error: 'user_id required' }, status: :bad_request
+    end
+    progress = UserProgressRecord.find_or_initialize_by(user_id: user_id, lesson_id: lesson.id)
+    progress.completed = true
+    progress.save!
+    render json: { message: 'Lesson marked as completed' }, status: :ok
   end
-end 
+end

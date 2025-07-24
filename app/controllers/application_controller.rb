@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::API
   before_action :authenticate_request!
-  attr_reader :current_user_id
 
   private
 
@@ -13,5 +12,9 @@ class ApplicationController < ActionController::API
     rescue
       render json: { error: 'Unauthorized' }, status: :unauthorized
     end
+  end
+
+  def current_user_id
+    @current_user_id
   end
 end 

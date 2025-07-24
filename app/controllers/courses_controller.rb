@@ -18,7 +18,8 @@ class CoursesController < ApplicationController
   end
 
   def show
-    course = CourseRecord.find(params[:id])
+    course = CourseRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless course
     render json: course_payload(course)
   end
 
@@ -31,13 +32,15 @@ class CoursesController < ApplicationController
   end
 
   def update
-    course = CourseRecord.find(params[:id])
+    course = CourseRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless course
     course.update!(title: params[:title], description: params[:description])
     head :no_content
   end
 
   def destroy
-    course = CourseRecord.find(params[:id])
+    course = CourseRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless course
     course.destroy!
     head :no_content
   end

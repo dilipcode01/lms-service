@@ -5,11 +5,11 @@ class UsersController < ApplicationController
     total_lessons = LessonRecord.count
     completed_lessons = UserProgressRecord.where(user_id: user_id, completed: true).count
     course_stats = CourseRecord.all.map do |course|
-      lessons = LessonRecord.where(course_id: course.aggregate_id)
+      lessons = LessonRecord.where(course_id: course.id)
       total = lessons.count
-      completed = UserProgressRecord.where(user_id: user_id, lesson_id: lessons.pluck(:aggregate_id), completed: true).count
+      completed = UserProgressRecord.where(user_id: user_id, lesson_id: lessons.pluck(:id), completed: true).count
       percent = total > 0 ? (completed.to_f / total * 100).round : 0
-      { course_id: course.aggregate_id, completion_percent: percent }
+      { course_id: course.id, completion_percent: percent }
     end
     render json: {
       user_id: user_id,
