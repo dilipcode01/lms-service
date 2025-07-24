@@ -13,17 +13,6 @@
 ActiveRecord::Schema[7.1].define(version: 2025_07_24_000825) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "uuid-ossp"
-
-  create_table "command_records", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "command_id", null: false
-    t.string "command_type", null: false
-    t.jsonb "command_json", null: false
-    t.jsonb "metadata_json", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["command_id"], name: "index_command_records_on_command_id", unique: true
-  end
 
   create_table "course_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title", null: false
@@ -32,33 +21,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_24_000825) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "event_records", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "aggregate_id", null: false
-    t.integer "sequence_number", null: false
-    t.string "event_type", null: false
-    t.jsonb "event_json", null: false
-    t.jsonb "metadata_json", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["aggregate_id", "sequence_number"], name: "index_event_records_on_aggregate_id_and_sequence_number", unique: true
-  end
-
   create_table "lesson_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "course_id", null: false
     t.string "title", null: false
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "snapshot_records", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "aggregate_id", null: false
-    t.integer "sequence_number", null: false
-    t.string "aggregate_type", null: false
-    t.jsonb "state", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["aggregate_id"], name: "index_snapshot_records_on_aggregate_id", unique: true
   end
 
   create_table "user_progress_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

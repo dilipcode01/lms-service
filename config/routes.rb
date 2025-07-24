@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :courses
+  resources :courses do
+    get 'lessons', on: :member
+  end
   resources :lessons do
     post 'complete', on: :member
   end

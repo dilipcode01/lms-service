@@ -45,6 +45,13 @@ class CoursesController < ApplicationController
     head :no_content
   end
 
+  def lessons
+    course = CourseRecord.find_by(id: params[:id])
+    return render json: { error: 'Not Found' }, status: :not_found unless course
+    lessons = LessonRecord.where(course_id: course.id)
+    render json: lessons
+  end
+
   private
 
   def course_payload(course)

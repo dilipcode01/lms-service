@@ -1,16 +1,14 @@
 require "jwt"
 require "securerandom"
+require "uuidtools"
 
 class AuthController < ApplicationController
   skip_before_action :authenticate_request!
 
   def login
-    user_id = params[:user_id]
-    # Ensure user_id is a valid UUID, otherwise generate one
-    unless user_id.present? && user_id.match?(/^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/)
-      user_id = SecureRandom.uuid
-    end
+    name = params[:name] || "user"
+    user_id = UUIDTools::UUID.sha1_create(UUIDTools::UUID_DNS_NAMESPACE, name).to_s
     token = JWT.encode({ user_id: user_id }, 'my$ecretK3y', 'HS256')
-    render json: { token: token, user_id: user_id }
+    render json: { token: token, user_id: user_id, name: name }
   end
 end 

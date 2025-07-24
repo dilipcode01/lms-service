@@ -12,6 +12,11 @@ gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 
 gem 'jwt'
+
+gem 'concurrent-ruby', '1.3.4'
+
+gem 'redis', '~> 4.0'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
@@ -40,4 +45,6 @@ group :development do
   # gem "spring"
 
 end
+
+gem 'uuidtools'
 

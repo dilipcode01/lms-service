@@ -10,6 +10,8 @@ services:
       - "15432:5432"
     volumes:
       - lms_pgdata:/var/lib/postgresql/data
+    networks:
+      - lmsnet
 
   lms:
     build:
@@ -22,7 +24,13 @@ services:
       - "3001:3000"
     volumes:
       - .:/app
-    command: bash -c "if [ ! -f spec/rails_helper.rb ]; then bundle exec rails generate rspec:install; fi && if [ ! -f db/sequent_schema.rb ]; then bundle exec rails generate sequent:install; fi && bundle exec rails db:create db:migrate && bundle exec rails server -b 0.0.0.0"
+    command: bash -c "if [ ! -f spec/rails_helper.rb ]; then bundle exec rails generate rspec:install; fi && bundle exec rails db:create db:migrate && bundle exec rails server -b 0.0.0.0"
+    networks:
+      - lmsnet
 
 volumes:
-  lms_pgdata: 
+  lms_pgdata:
+
+networks:
+  lmsnet:
+    external: true 
