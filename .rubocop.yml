@@ -1,0 +1,13 @@
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+
+Rails:
+  Enabled: true
+
+RSpec:
+  Enabled: true 

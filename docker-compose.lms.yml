@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "15432:5432"
+    volumes:
+      - lms_pgdata:/var/lib/postgresql/data
+
+  lms:
+    build:
+      context: .
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/lms_development
+    depends_on:
+      - postgres
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/app
+    command: bash -c "if [ ! -f spec/rails_helper.rb ]; then bundle exec rails generate rspec:install; fi && if [ ! -f db/sequent_schema.rb ]; then bundle exec rails generate sequent:install; fi && bundle exec rails db:create db:migrate && bundle exec rails server -b 0.0.0.0"
+
+volumes:
+  lms_pgdata: 
